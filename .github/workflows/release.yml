@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: tag release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub release
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - run: go vet ./...
+
+      - run: go test -race -count=1 ./...
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          prerelease=""
+          case "$TAG" in *-*) prerelease="--prerelease" ;; esac
+          gh release create "$TAG" --title "$TAG" --generate-notes $prerelease
+
+      # There is no registry to push to - the module proxy fetches the tag on
+      # first request. Warming it makes `go get` fast for the first consumer.
+      - name: Warm the module proxy
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          GOPROXY=proxy.golang.org go list -m "github.com/mantissatech/robase-sdk-go@${TAG}"
