@@ -285,6 +285,7 @@ func TestRequestBodyEncoding(t *testing.T) {
 		PhoneNumber: "+2348012345678",
 		CodeLength:  4,
 		TTLSeconds:  300,
+		Code:        "9081",
 		Metadata:    map[string]any{"user_id": "u_1"},
 	})
 	if err != nil {
@@ -299,6 +300,9 @@ func TestRequestBodyEncoding(t *testing.T) {
 	}
 	if body["ttl_seconds"] != float64(300) {
 		t.Errorf("ttl_seconds = %v", body["ttl_seconds"])
+	}
+	if body["code"] != "9081" {
+		t.Errorf("code = %v", body["code"])
 	}
 	md, _ := body["metadata"].(map[string]any)
 	if md["user_id"] != "u_1" {
@@ -323,5 +327,8 @@ func TestOmittedOptionalsAreNotSent(t *testing.T) {
 	}
 	if _, ok := body["ttl_seconds"]; ok {
 		t.Error("ttl_seconds should be omitted when unset")
+	}
+	if _, ok := body["code"]; ok {
+		t.Error("code should be omitted when unset")
 	}
 }

@@ -70,6 +70,7 @@ client, err := robase.New(apiKey,
 ```go
 sent, err := client.OTP.Send(ctx, robase.SendOTPParams{
     PhoneNumber: "+2348012345678", // required, E.164
+    Code:        "908172",          // optional, 4 to 8 digits; omit to generate
     CodeLength:  6,                // optional, 4–8, defaults to 6
     TTLSeconds:  600,              // optional, ≤3600, defaults to 600
     Metadata:    map[string]any{"user_id": "u_123"},

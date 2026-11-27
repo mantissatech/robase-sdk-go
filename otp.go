@@ -31,6 +31,9 @@ type SendOTPParams struct {
 	CodeLength int `json:"code_length,omitempty"`
 	// TTLSeconds is how long the code stays valid, up to 3600. Defaults to 600.
 	TTLSeconds int `json:"ttl_seconds,omitempty"`
+	// Code is an optional 4 to 8 digit code. Leave it empty and Robase generates one.
+	// An empty value is omitted, so callers that do not set Code are unchanged.
+	Code string `json:"code,omitempty"`
 	// Metadata is arbitrary data stored with the OTP and echoed back by Get.
 	Metadata map[string]any `json:"metadata,omitempty"`
 }
